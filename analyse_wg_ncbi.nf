@@ -14,6 +14,10 @@ process listGenome{
     script:
     '''
     esearch -db assembly -query ${groupToStudy} | efetch -format uid > uid_list.txt
+    if grep -q "FtpPath_Assembly_rpt" summary
+        then
+        echo "toto"
+    fi
     '''
 }
 
@@ -79,7 +83,7 @@ process selectGenomeToDL{
 
     shell:
     '''
-    $genome=`selectGenomeFile.py !{spName} !{noalt}`
+    genome=`selectGenomeFile.py !{spName} !{noalt}`
     '''
 
 }
