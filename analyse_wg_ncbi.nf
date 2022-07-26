@@ -36,7 +36,7 @@ process getDownloadLink{
     esummary -db assembly -id !{genomeId} > summary
     if grep -q FtpPath_Assembly_rpt summary
         then
-        release_date=`grep SeqReleaseDate summary | sed -rn `
+        release_date=`grep SeqReleaseDate summary | sed -rn ''`
     fi
     '''
 }
