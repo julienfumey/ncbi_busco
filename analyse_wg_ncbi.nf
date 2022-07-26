@@ -12,9 +12,9 @@ process listGenome{
     file('uid_list.txt') into list_id
 
     script:
-    '''
+    """
     esearch -db assembly -query ${groupToStudy} | efetch -format uid > uid_list.txt
-    '''
+    """
 }
 
 list_id.splitText().into(ids)
@@ -31,7 +31,7 @@ process getDownloadLink{
     tuple env(release_date), env(species), env(dl_link), env(assembly_report) into infoSpecies
 
     shell:
-    '''
+    """
     esummary -db assembly -id !{genomeId} > summary
     if grep -q "FtpPath_Assembly_rpt" summary
         then
@@ -41,7 +41,7 @@ process getDownloadLink{
         assembly_report=`grep FtpPath_Assembly_rpt summary | sed -rn 's/.*>(.*)<.*/\1/p'`
         echo "$release_date,$species,$dl_link,$assembly_report" > !{genomeId}_info.csv
     fi
-    '''
+    """
 }
 
 all_info.collectFile(name: 'All_infos.csv').subscribe{
