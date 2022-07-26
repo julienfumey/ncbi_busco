@@ -12,9 +12,9 @@ process listGenome{
     file('uid_list.txt') into list_id
 
     script:
-    """
+    '''
     esearch -db assembly -query ${groupToStudy} | efetch -format uid > uid_list.txt
-    """
+    '''
 }
 
 list_id.splitText().into(ids)
