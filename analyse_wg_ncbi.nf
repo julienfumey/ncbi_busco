@@ -20,7 +20,6 @@ process listGenome{
 list_id.splitText().into(ids)
 
 process getDownloadLink{
-
     label 'ncbi'
 
     input:
