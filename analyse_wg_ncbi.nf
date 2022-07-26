@@ -11,17 +11,10 @@ process listGenome{
     output:
     file('uid_list.txt') into list_id
 
-    shell:
+    script:
     '''
     esearch -db assembly -query ${groupToStudy} | efetch -format uid > uid_list.txt
-    if grep -q "FtpPath_Assembly_rpt" summary
-        then
-        release_date=$(grep SeqReleaseDate summary | sed -rn 's/.*([0-9]{4})\/([0-9]{2})\/([0-9]{2}).*/\1\2\3/p')
-        species=$(grep SpeciesName summary | sed -rn 's/.*>(.*)<.*/\1/p')
-        dl_link=$(grep FtpPath_Assembly_rpt summary | sed -rn 's/.*>(.*)_assembly_report.txt.*/\1_genomic.fna.gz/p')
-        assembly_report=$(grep FtpPath_Assembly_rpt summary | sed -rn 's/.*>(.*)<.*/\1/p')
-        echo "$release_date,$species,$dl_link,$assembly_report" > !{genomeId}_info.csv
-    fi
+    
     '''
 }
 
@@ -41,6 +34,14 @@ process getDownloadLink{
     shell:
     '''
     esummary -db assembly -id !{genomeId} > summary
+    if grep -q "FtpPath_Assembly_rpt" summary
+        then
+        release_date=$(grep SeqReleaseDate summary | sed -rn 's/.*([0-9]{4})\/([0-9]{2})\/([0-9]{2}).*/\1\2\3/p')
+        species=$(grep SpeciesName summary | sed -rn 's/.*>(.*)<.*/\1/p')
+        dl_link=$(grep FtpPath_Assembly_rpt summary | sed -rn 's/.*>(.*)_assembly_report.txt.*/\1_genomic.fna.gz/p')
+        assembly_report=$(grep FtpPath_Assembly_rpt summary | sed -rn 's/.*>(.*)<.*/\1/p')
+        echo "$release_date,$species,$dl_link,$assembly_report" > !{genomeId}_info.csv
+    fi
     '''
 }
 
