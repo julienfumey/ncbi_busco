@@ -6,14 +6,14 @@ process listGenome{
     label 'ncbi'
 
     input:
-    groupToStudy from groupe
+    val(groupe)
 
     output:
     file('uid_list.txt') into list_id
 
     script:
     """
-    esearch -db assembly -query ${groupToStudy} | efetch -format uid > uid_list.txt
+    esearch -db assembly -query ${groupe} | efetch -format uid > uid_list.txt
     """
 }
 
