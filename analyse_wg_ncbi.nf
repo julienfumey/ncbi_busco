@@ -27,9 +27,13 @@ process getDownloadLink{
 
     output:
     file('*info.csv') into all_info, all_info2, all_info3
-    tuple env(release_date), env(species), env(dl_link), env(assembly_report) into infoSpecies
+    //tuple env(release_date), env(species), env(dl_link), env(assembly_report) into infoSpecies
 
-    shell:
+    script:
+    """
+    esummary -db assembly -id ${genomeId} > summary
+    """
+    /*shell:
     """
     esummary -db assembly -id !{genomeId} > summary
     if grep -q "FtpPath_Assembly_rpt" summary
@@ -40,7 +44,7 @@ process getDownloadLink{
         assembly_report=`grep FtpPath_Assembly_rpt summary | sed -rn 's/.*>(.*)<.*/\1/p'`
         echo "$release_date,$species,$dl_link,$assembly_report" > !{genomeId}_info.csv
     fi
-    """
+    """*/
 }
 
 all_info.collectFile(name: 'All_infos.csv').subscribe{
