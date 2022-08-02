@@ -5,6 +5,7 @@ params.resultspath='/pasteur/zeus/BioIT/jfumey/busco/'
 
 groupe=params.groupe
 workDir=${params.workpath}/work
+resultsDir=param.resultspath
 
 process listGenome{
     label 'ncbi'
@@ -97,9 +98,9 @@ process selectGenomeToDL{
     output:
     file(*.fna.gz) into fastagzipfile
 
-    shell:
-    '''
-    genome=`selectGenomeFile.py !{spName} !{noalt}`
-    '''
+    script:
+    """
+    selectGenomeFile.py ${spName} ${noalt} > fileToDL
+    """
 
 }
