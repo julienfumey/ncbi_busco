@@ -65,14 +65,14 @@ process getDownloadLink{
     """
 }
 
-all_info.collectFile(name: 'All_infos.csv').subscribe{
+/*all_info.collectFile(name: 'All_infos.csv').subscribe{
     f -> f.copyTo(results.resolve(f.name))
-}
+}*/
 
 process removeAltGenome{
     //publishDir "${resultsDir}", mode: 'link'
     input:
-    file(in) from all_info2.collectFile(name: 'All_infos.csv')
+    file(in) from all_info2.collectFile()
 
     output:
     file('NoAlt_All_infos.csv') into all_info_noalt, all_info_noalt2
