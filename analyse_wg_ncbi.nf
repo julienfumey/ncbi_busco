@@ -1,4 +1,4 @@
-nextflow.enable.dsl=2
+//nextflow.enable.dsl=2
 params.groupe='Mammalia'
 params.workpath='/pasteur/appa/scratch/jfumey/busco/'
 params.resultspath='/pasteur/zeus/BioIT/jfumey/busco/'
