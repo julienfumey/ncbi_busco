@@ -20,25 +20,37 @@ process listGenome{
 
 list_id.splitText().into(ids)
 
-process getDownloadLink{
+process getSummaryGenome{
     label 'ncbi'
 
     input:
     val(genomeId) from ids
 
     output:
-    file('*info.csv') into all_info, all_info2, all_info3
-    tuple env(release_date), env(species), env(dl_link), env(assembly_report) into infoSpecies
+    file('summary.txt') into summary
 
-
-    shell:
+    script:
     '''
-    esummary -db assembly -id !{genomeId} > summary
-    if grep -q FtpPath_Assembly_rpt summary
+    esummary -db assembly -id ${genomeId} > summary.txt
+    '''
+}
+
+process getDownloadLink{
+    label 'selectDLlink'
+
+    input:
+    file(s) from summary
+
+    output:
+    file('genome_info.csv') into all_info, all_info2, all_info3
+
+    script:
+    """
+    if grep -q FtpPath_Assembly_rpt ${s}
         then
-        release_date=`grep SeqReleaseDate summary | sed -rn ''`
+        selectDLlink.sh ${s} > genome_info.csv
     fi
-    '''
+    """
 }
 
 all_info.collectFile(name: 'All_infos.csv').subscribe{
