@@ -5,7 +5,7 @@ params.resultspath='/pasteur/zeus/BioIT/jfumey/busco/'
 
 groupe=params.groupe
 workDir="${params.workpath}/work"
-resultsDir=param.resultspath
+resultsDir=params.resultspath
 
 process listGenome{
     label 'ncbi'
