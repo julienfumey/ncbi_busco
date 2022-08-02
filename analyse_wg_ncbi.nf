@@ -1,6 +1,6 @@
 params.groupe='Mammalia'
 params.workpath='/pasteur/appa/scratch/jfumey/busco/'
-params.resultspath='/pasteur/zeus/projets/p01/BioIT/jfumey/busco/'
+params.resultspath='/pasteur/appa/homes/jfumey/didier/busco_try/'
 params.ncbiapikey="84413ef210acc86d928b322060eb89aa1808"
 
 groupe=params.groupe
@@ -27,7 +27,7 @@ process listGenome{
 list_id.splitText().map{it -> it.trim()}.into{ids1; ids2}
 
 process getSummaryGenome{
-    publishDir "${resultsDir}/01_genome_summary", mode: 'link'
+    //publishDir "${resultsDir}/01_genome_summary", mode: 'link'
     label 'ncbi'
 
     input:
@@ -44,7 +44,7 @@ process getSummaryGenome{
 }
 
 process getDownloadLink{
-    publishDir "${resultsDir}", mode: 'link'
+    //publishDir "${resultsDir}", mode: 'link'
     label 'selectDLlink'
 
     input:
@@ -70,7 +70,7 @@ all_info.collectFile(name: 'All_infos.csv').subscribe{
 }
 
 process removeAltGenome{
-    publishDir "${resultsDir}", mode: 'link'
+    //publishDir "${resultsDir}", mode: 'link'
     input:
     file(in) from all_info2.collectFile(name: 'All_infos.csv')
 
