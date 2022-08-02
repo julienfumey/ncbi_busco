@@ -24,7 +24,7 @@ process listGenome{
     """
 }
 
-list_id.splitText().into(ids1;ids2)
+list_id.splitText(by:1, file: false).into(ids1; ids2)
 
 process getSummaryGenome{
     label 'ncbi'
