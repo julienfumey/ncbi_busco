@@ -50,13 +50,16 @@ process getDownloadLink{
     file(s) from summary
 
     output:
-    file('genome_info.csv') into all_info, all_info2, all_info3
+    file('genome_info.csv') optional true into all_info, all_info2, all_info3
+    file('nogenome.csv') optional true into nogenome
 
     script:
     """
     if grep -q FtpPath_Assembly_rpt ${s}
         then
         selectDLlink.sh ${s} > genome_info.csv
+    else
+        touch nogenome.csv
     fi
     """
 }
