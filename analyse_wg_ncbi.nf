@@ -4,7 +4,7 @@ params.workpath='/pasteur/appa/scratch/jfumey/busco/'
 params.resultspath='/pasteur/zeus/BioIT/jfumey/busco/'
 
 groupe=params.groupe
-workDir=${params.workpath}/work
+workDir="${params.workpath}/work"
 resultsDir=param.resultspath
 
 process listGenome{
@@ -77,7 +77,7 @@ process removeAltGenome{
 
 process createUniqSpeciesFile{
     publishDir "${resultsDir}", mode: 'link'
-    
+
     input:
     file(in) from all_info_noalt
 
