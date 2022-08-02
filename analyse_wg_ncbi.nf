@@ -1,10 +1,12 @@
 params.groupe='Mammalia'
 params.workpath='/pasteur/appa/scratch/jfumey/busco/'
 params.resultspath='/pasteur/zeus/BioIT/jfumey/busco/'
+params.ncbiapikey="84413ef210acc86d928b322060eb89aa1808"
 
 groupe=params.groupe
 workDir="${params.workpath}/work"
 resultsDir=params.resultspath
+ncbiapikey=params.ncbiapikey
 
 process listGenome{
     label 'ncbi'
@@ -16,18 +18,19 @@ process listGenome{
     file('uid_list.txt') into list_id
 
     script:
-    '''
+    """
+    export NCBI_API_KEY=$ncbiapikey
     esearch -db assembly -query ${groupToStudy} | efetch -format uid > uid_list.txt
-    '''
+    """
 }
 
-//list_id.splitText().into(ids)
+list_id.splitText().into(ids1;ids2)
 
 process getSummaryGenome{
     label 'ncbi'
 
     input:
-    val(genomeId) from list_id.splitText()
+    val(genomeId) from ids1
 
     output:
     file('summary.txt') into summary
