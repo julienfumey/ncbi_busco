@@ -24,6 +24,8 @@ process listGenome{
     """
 }
 
+
+
 list_id.splitText(by:1, file: false).into{ids1; ids2}
 
 process getSummaryGenome{
@@ -36,9 +38,9 @@ process getSummaryGenome{
     file('summary.txt') into summary
 
     script:
-    '''
+    """
     esummary -db assembly -id ${genomeId} > summary.txt
-    '''
+    """
 }
 
 process getDownloadLink{
