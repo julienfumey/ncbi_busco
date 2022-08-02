@@ -40,7 +40,7 @@ process getSummaryGenome{
 
     script:
     """
-    esummary -db assembly -id ${genomeId} > ${genome_id}_summary.txt
+    esummary -db assembly -id ${genomeId} > ${genomeId}_summary.txt
     """
 }
 
