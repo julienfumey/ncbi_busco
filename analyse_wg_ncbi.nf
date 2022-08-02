@@ -62,7 +62,7 @@ all_info.collectFile(name: 'All_infos.csv').subscribe{
 }
 
 process removeAltGenome{
-    publishDir "${results}", mode: 'link'
+    publishDir "${resultsDir}", mode: 'link'
     input:
     file(in) from all_info2.collectFile(name: 'All_infos.csv')
 
@@ -76,6 +76,8 @@ process removeAltGenome{
 }
 
 process createUniqSpeciesFile{
+    publishDir "${resultsDir}", mode: 'link'
+    
     input:
     file(in) from all_info_noalt
 
@@ -88,6 +90,7 @@ process createUniqSpeciesFile{
     """
 }
 
+/*
 uniq_species.splitText().into(species)
 
 process selectGenomeToDL{
@@ -104,3 +107,4 @@ process selectGenomeToDL{
     """
 
 }
+*/
