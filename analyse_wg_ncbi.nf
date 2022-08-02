@@ -24,9 +24,7 @@ process listGenome{
     """
 }
 
-
-
-list_id.splitText(by:1, file: false).into{ids1; ids2}
+list_id.splitCsv(header=false, by:1).into{ids1; ids2}
 
 process getSummaryGenome{
     publishDir "${resultsDir}/01_genome_summary", mode: 'link'
@@ -40,6 +38,7 @@ process getSummaryGenome{
 
     script:
     """
+    export NCBI_API_KEY=$ncbiapikey
     esummary -db assembly -id ${genomeId} > ${genomeId}_summary.txt
     """
 }
