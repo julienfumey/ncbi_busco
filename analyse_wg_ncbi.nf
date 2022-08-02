@@ -1,4 +1,3 @@
-//nextflow.enable.dsl=2
 params.groupe='Mammalia'
 params.workpath='/pasteur/appa/scratch/jfumey/busco/'
 params.resultspath='/pasteur/zeus/BioIT/jfumey/busco/'
@@ -22,13 +21,13 @@ process listGenome{
     '''
 }
 
-list_id.splitText().into(ids)
+//list_id.splitText().into(ids)
 
 process getSummaryGenome{
     label 'ncbi'
 
     input:
-    val(genomeId) from ids
+    val(genomeId) from list_id.splitText()
 
     output:
     file('summary.txt') into summary
