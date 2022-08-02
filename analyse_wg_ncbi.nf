@@ -29,21 +29,23 @@ process listGenome{
 list_id.splitText(by:1, file: false).into{ids1; ids2}
 
 process getSummaryGenome{
+    publishDir "${resultsDir}/01_genome_summary", mode: 'link'
     label 'ncbi'
 
     input:
     val(genomeId) from ids1
 
     output:
-    file('summary.txt') into summary
+    file('*summary.txt') into summary
 
     script:
     """
-    esummary -db assembly -id ${genomeId} > summary.txt
+    esummary -db assembly -id ${genomeId} > ${genome_id}_summary.txt
     """
 }
 
 process getDownloadLink{
+    publishDir "${resultsDir}", mode: 'link'
     label 'selectDLlink'
 
     input:
