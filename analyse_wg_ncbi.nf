@@ -24,7 +24,7 @@ process listGenome{
     """
 }
 
-list_id.splitCsv(header:false, by:1).into{ids1; ids2}
+list_id.splitText().map{it -> it.trim()}.into{ids1; ids2}
 
 process getSummaryGenome{
     publishDir "${resultsDir}/01_genome_summary", mode: 'link'
