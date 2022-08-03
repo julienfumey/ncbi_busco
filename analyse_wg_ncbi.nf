@@ -84,7 +84,7 @@ process removeAltGenome{
 }
 
 process createUniqSpeciesFile{
-    publishDir "${resultsDir}", mode: 'link'
+    publishDir "${resultsDir}", mode: 'copy'
 
     input:
     file(in) from all_info_noalt
