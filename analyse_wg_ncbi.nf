@@ -1,10 +1,10 @@
 params.groupe='Mammalia'
 params.workpath='/pasteur/appa/scratch/jfumey/busco/'
 params.resultspath='/pasteur/appa/homes/jfumey/didier/busco_try/'
+params.resultspath='/pasteur/appa/scratch/jfumey/busco/results/'
 params.ncbiapikey="84413ef210acc86d928b322060eb89aa1808"
 
 groupe=params.groupe
-workDir="${params.workpath}/work"
 resultsDir=params.resultspath
 ncbiapikey=params.ncbiapikey
 
