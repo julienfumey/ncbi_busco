@@ -94,7 +94,7 @@ process createUniqSpeciesFile{
 
     script:
     """
-    cut -f 2 $in | sort | uniq > uniq_species.txt
+    cut -d, -f 2 $in | sort | uniq > uniq_species.txt
     """
 }
 
