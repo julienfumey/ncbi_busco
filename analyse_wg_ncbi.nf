@@ -100,6 +100,8 @@ process downloadGenome{
     //publishDir "${resultsDir}", mode: 'copy'
     label 'dl'
     executor 'local'
+    maxForks 1
+    
     input:
     val(spName) from species1
     each file(noalt) from all_info_noalt2
