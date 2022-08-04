@@ -99,9 +99,10 @@ uniq_species.splitText(by:1).map{it -> it.trim()}.into{species1;species2}
 process downloadGenome{
     //publishDir "${resultsDir}", mode: 'copy'
     label 'dl'
+    executor 'local'
     input:
     val(spName) from species1
-    file(noalt) from all_info_noalt2
+    each file(noalt) from all_info_noalt2
 
     output:
     file('genome_file_info.csv') into genomeInfo
