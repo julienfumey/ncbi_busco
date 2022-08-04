@@ -212,6 +212,6 @@ process busco{
  
     script:
     """
-    busco -i ${fastaUnzipped} -m genome -o ${spName} -l ${buscoref} --download_path ${buscoDLpath} -c 50 --offline -f --metaeuk_parameters='--remove-tmp-file=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
+    busco -i ${fastaUnzipped} -m genome -o ${spName.replaceAll(/\s/,'_')} -l ${buscoref} --download_path ${buscoDLpath} -c 50 --offline -f --metaeuk_parameters='--remove-tmp-file=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
     """
 }
