@@ -69,6 +69,21 @@ process getDownloadLink{
     """
 }
 
+process gatherGenomeInfo{
+    publishDir "${resultsDir}/Info", mode:'copy'
+
+    input:
+    file(allinfo) from all_info3.collectFile()
+
+    output:
+    file "info_all_genome.txt" into all_info_publish
+
+    script:
+    """
+    cat ${allinfo} > info_all_genome.txt
+    """
+}
+
 process removeAltGenome{
     //publishDir "${resultsDir}", mode: 'link'
     input:
