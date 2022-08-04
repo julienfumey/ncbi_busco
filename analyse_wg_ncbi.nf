@@ -94,7 +94,7 @@ process createUniqSpeciesFile{
     """
 }
 
-uniq_species.splitText().into(species)
+uniq_species.splitText().into{species}
 
 process downloadGenome{
     //publishDir "${resultsDir}", mode: 'copy'
