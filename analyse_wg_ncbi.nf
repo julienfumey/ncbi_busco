@@ -187,19 +187,13 @@ process busco{
 
     input:
     file(buscoref) from buscoRefFile
-    tuple val(spName), file(fastaUnzipped) from fastaUnzipped2
-    tuple val(spName2), file(trFasta) from trimmedFasta
+    tuple val(spName), file(fastaUnzipped) from ( notrim ? fastaUnzipped2 : trimmedFasta )
 
     output:
     tuple file('*.tsv'), file('*.txt') into buscoresults
  
     script:
-    if ($spName2)
     """
     busco -i ${trFasta} -m genome -o ${spName} -l ${buscoref} --download_path ${buscoDLpath} -c 50 --offline -f --metaeuk_parameters='--remove-tmp-file=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
-    """
-    else
-    """
-    busco -i ${fastaUnzipped} -m genome -o ${spName} -l ${buscoref} --download_path ${buscoDLpath} -c 50 --offline -f --metaeuk_parameters='--remove-tmp-file=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
     """
 }
