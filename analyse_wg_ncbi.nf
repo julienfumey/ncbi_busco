@@ -194,7 +194,7 @@ process busco{
     tuple file('*.tsv'), file('*.txt') into buscoresults
  
     script:
-    if ${trFasta}
+    if ($spName2)
     """
     busco -i ${trFasta} -m genome -o ${spName} -l ${buscoref} --download_path ${buscoDLpath} -c 50 --offline -f --metaeuk_parameters='--remove-tmp-file=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
     """
