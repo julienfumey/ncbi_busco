@@ -34,6 +34,8 @@ process getSummaryGenome{
     publishDir "${resultsDir}/01_genome_summary", mode: 'copy'
     label 'ncbi'
 
+    maxForks = 
+
     input:
     val(genomeId) from ids1
 
@@ -44,6 +46,7 @@ process getSummaryGenome{
     """
     export NCBI_API_KEY=$ncbiapikey
     esummary -db assembly -id ${genomeId} > ${genomeId}_summary.txt
+    sleep 1
     """
 }
 
