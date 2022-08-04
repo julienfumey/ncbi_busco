@@ -190,7 +190,9 @@ process removeAltScaffold{
     tuple val(spName), file('genome_trimmed.fasta') into trimmedFasta
 
     script:
+    """
     samtools faidx ${infasta} < ${goodScaffold} > genome_trimmed.fasta
+    """
 }
 
 
