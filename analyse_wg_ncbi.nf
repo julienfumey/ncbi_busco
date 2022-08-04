@@ -65,10 +65,6 @@ process getDownloadLink{
     """
 }
 
-/*all_info.collectFile(name: 'All_infos.csv').subscribe{
-    f -> f.copyTo(results.resolve(f.name))
-}*/
-
 process removeAltGenome{
     //publishDir "${resultsDir}", mode: 'link'
     input:
@@ -84,7 +80,7 @@ process removeAltGenome{
 }
 
 process createUniqSpeciesFile{
-    publishDir "${resultsDir}", mode: 'copy'
+    
 
     input:
     file(in) from all_info_noalt
@@ -98,21 +94,86 @@ process createUniqSpeciesFile{
     """
 }
 
-/*
 uniq_species.splitText().into(species)
 
-process selectGenomeToDL{
+process downloadGenome{
+    //publishDir "${resultsDir}", mode: 'copy'
+    label 'dl'
     input:
     val(spName) from species
     file(noalt) from all_info_noalt2
 
     output:
-    file(*.fna.gz) into fastagzipfile
+    file('genome_file_info.csv') into genomeInfo
+    file('*.fna.gz') into fastaFile
+    tuple val(spName), file('*._report.txt') into reportFile
+
+    shell:
+    '''
+    `selectGenome.sh !{spName} !{noalt}` > genome_file_info.csv
+    '''
+
+}
+
+process unzipFasta{
+
+    input:
+    file(fasta) from fastaFile
+
+    output:
+    file('*.fna') into fastaUnzipped, fastaUnzipped2
 
     script:
     """
-    selectGenomeFile.py ${spName} ${noalt} > fileToDL
+    gzip -d ${fasta}
+    """
+}
+
+process checkforAltScaffold{
+    publishDir "${resultsDir}/Info", pattern: '*_info_removed_genome_parts.txt' , mode: 'copy'
+
+    input:
+    tuple val(spName), file(report) from reportFile
+   
+
+    output:
+    file('modified_genome.txt') optional true into listofModifiedGenome
+    file('good_scaffold_list.txt') optional true into listGoodScaffold
+    file("${spName}_info_removed_genome_parts.txt") optional true into listRemovedGenomeParts
+    file("notrim.txt") optional true into notrim
+
+    script:
+    """
+    if grep -q alt-scaffold $report
+        then 
+            echo ${spName} >> modified_genome.txt
+            listGoodScaffold.sh ${report} > good_scaffold_list.txt
+            listRemovedGenomeParts.sh > ${spName}_info_removed_genome_parts.txt
+        else
+            touch notrim.txt     
     """
 
+}
+
+process removeAltScaffold{
+    label 'samtools'
+
+    input:
+    file(infasta) from fastaUnzipped
+    file(goodScaffold) from listGoodScaffold
+
+    output:
+    file('genome_trimmed.fasta') into trimmedFasta
+
+    script:
+    samtools faidx ${infasta} < ${goodScaffold} > genome_trimmed.fasta
+}
+
+/*
+process busco{
+    i
+
+    script:
+        
 }
 */
