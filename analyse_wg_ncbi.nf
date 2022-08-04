@@ -9,7 +9,7 @@ params.buscoDLpath="/pasteur/appa/homes/jfumey/busco/busco_downloads/"
 groupe=params.groupe
 resultsDir=params.resultspath
 ncbiapikey=params.ncbiapikey
-buscoRefFile=params.buscoRefFile
+buscoRefFile=file(params.buscoRefFile)
 buscoDLpath=params.buscoDLpath
 
 process listGenome{
