@@ -31,7 +31,7 @@ process listGenome{
 list_id.splitText().map{it -> it.trim()}.into{ids1; ids2}
 
 process getSummaryGenome{
-    publishDir "${resultsDir}/01_genome_summary", mode: 'link'
+    publishDir "${resultsDir}/01_genome_summary", mode: 'copy'
     label 'ncbi'
 
     input:
