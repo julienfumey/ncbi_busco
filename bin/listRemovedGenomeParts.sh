@@ -1,3 +1,3 @@
 #! /usr/bin/sh
 
-grep  "alt-scaffold" $genome_report_name | grep -v "^na$"
+grep  "alt-scaffold" $1 | grep -v "^na$"
