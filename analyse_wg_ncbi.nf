@@ -34,7 +34,7 @@ process getSummaryGenome{
     publishDir "${resultsDir}/01_genome_summary", mode: 'copy'
     label 'ncbi'
 
-    maxForks = 
+    maxForks = 10
 
     input:
     val(genomeId) from ids1
