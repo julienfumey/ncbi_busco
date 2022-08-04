@@ -153,7 +153,7 @@ process checkforAltScaffold{
     """
     if grep -q alt-scaffold $report
         then 
-            echo ${spName} >> modified_genome.txt
+            echo ${spName} > modified_genome.txt
             listGoodScaffold.sh ${report} > good_scaffold_list.txt
             listRemovedGenomeParts.sh ${report} > ${report.baseName}_info_removed_genome_parts.txt
         else
@@ -163,6 +163,20 @@ process checkforAltScaffold{
 
 }
 
+process publishModified{
+    publishDir "${resultsDir}/Info", mode:'copy'
+
+    input:
+    file modified from listofModifiedGenome.collectFile
+
+    output
+    file "modifiedGenome.txt" into modified_genome
+
+    script:
+    """
+    cat ${modified} > modifiedGenome.txt
+    """
+}
 
 
 process removeAltScaffold{
