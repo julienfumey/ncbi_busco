@@ -169,7 +169,7 @@ process publishModified{
     input:
     file modified from listofModifiedGenome.collectFile()
 
-    output
+    output:
     file "modifiedGenome.txt" into modified_genome
 
     script:
