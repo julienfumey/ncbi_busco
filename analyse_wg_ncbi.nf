@@ -3,10 +3,14 @@ params.workpath='/pasteur/appa/scratch/jfumey/busco/'
 //params.resultspath='/pasteur/appa/homes/jfumey/didier/busco_try/'
 params.resultspath='/pasteur/appa/scratch/jfumey/busco/results/'
 params.ncbiapikey="84413ef210acc86d928b322060eb89aa1808"
+params.buscoRefFile="mammalia_odb10"
+params.buscoDLpath="/pasteur/appa/homes/jfumey/busco/busco_downloads/"
 
 groupe=params.groupe
 resultsDir=params.resultspath
 ncbiapikey=params.ncbiapikey
+buscoRefFile=params.buscoRefFile
+buscoDLpath=params.buscoDLpath
 
 process listGenome{
     label 'ncbi'
@@ -108,7 +112,7 @@ process downloadGenome{
 
     output:
     file('genome_file_info.csv') into genomeInfo
-    file('*.fna.gz') into fastaFile
+    tuple val(spName), file('*.fna.gz') into fastaFile
     tuple val(spName), file('*_report.txt') into reportFile
 
     shell:
@@ -121,10 +125,10 @@ process downloadGenome{
 process unzipFasta{
 
     input:
-    file(fasta) from fastaFile
+    tuple val(spName), file(fasta) from fastaFile
 
     output:
-    file('unzip.fasta') into fastaUnzipped, fastaUnzipped2
+    tuple val(spName), file('unzip.fasta') into fastaUnzipped, fastaUnzipped2
 
     script:
     """
@@ -142,7 +146,7 @@ process checkforAltScaffold{
     output:
     file('modified_genome.txt') optional true into listofModifiedGenome
     file('good_scaffold_list.txt') optional true into listGoodScaffold
-    file("${spName}_info_removed_genome_parts.txt") optional true into listRemovedGenomeParts
+    file("${report.baseName}_info_removed_genome_parts.txt") optional true into listRemovedGenomeParts
     file("notrim.txt") optional true into notrim
 
     script:
@@ -151,7 +155,7 @@ process checkforAltScaffold{
         then 
             echo ${spName} >> modified_genome.txt
             listGoodScaffold.sh ${report} > good_scaffold_list.txt
-            listRemovedGenomeParts.sh > ${spName}_info_removed_genome_parts.txt
+            listRemovedGenomeParts.sh > ${report.baseName}_info_removed_genome_parts.txt
         else
             touch notrim.txt
     fi   
@@ -159,25 +163,44 @@ process checkforAltScaffold{
 
 }
 
+
+
 process removeAltScaffold{
     label 'samtools'
 
     input:
-    file(infasta) from fastaUnzipped
+    tuple val(spName), file(infasta) from fastaUnzipped
     file(goodScaffold) from listGoodScaffold
 
     output:
-    file('genome_trimmed.fasta') into trimmedFasta
+    tuple val(spName), file('genome_trimmed.fasta') into trimmedFasta
 
     script:
     samtools faidx ${infasta} < ${goodScaffold} > genome_trimmed.fasta
 }
 
-/*
-process busco{
-    i
 
+
+process busco{
+    publishDir "${resultsDir}/results/${spName}/", mode:'copy'
+    label 'busco'
+
+    input:
+    file(buscoref) from buscoRefFile
+    tuple val(spName), file(fastaUnzipped) from fastaUnzipped2
+    tuple val(spName2), file(trFasta) from trimmedFasta
+
+    output:
+    tuple file('*.tsv'), file('*.txt') into buscoresults
+ 
     script:
+    if ${trFasta}:
+    """
+    busco -i ${trFasta} -m genome -o ${spName} -l ${buscoref} --download_path ${buscoDLpath} -c 50 --offline -f --metaeuk_parameters='--remove-tmp-file=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
+    """
+    else:
+    """
+    busco -i ${fastaUnzipped} -m genome -o ${spName} -l ${buscoref} --download_path ${buscoDLpath} -c 50 --offline -f --metaeuk_parameters='--remove-tmp-file=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
+    """
         
 }
-*/
