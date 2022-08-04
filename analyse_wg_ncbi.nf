@@ -167,7 +167,7 @@ process publishModified{
     publishDir "${resultsDir}/Info", mode:'copy'
 
     input:
-    file modified from listofModifiedGenome.collectFile
+    file modified from listofModifiedGenome.collectFile()
 
     output
     file "modifiedGenome.txt" into modified_genome
