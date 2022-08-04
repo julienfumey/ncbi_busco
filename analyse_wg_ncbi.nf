@@ -60,7 +60,10 @@ process getDownloadLink{
 
     script:
     """
-    if grep -q FtpPath_Assembly_rpt ${s}
+    if grep -q suppressed ${s}
+        then
+        touch nogenome.csv
+    elif grep -q FtpPath_Assembly_rpt ${s}
         then
         selectDLlink.sh ${s} > genome_info.csv
     else
