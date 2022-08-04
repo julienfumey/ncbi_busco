@@ -100,7 +100,7 @@ process downloadGenome{
     //publishDir "${resultsDir}", mode: 'copy'
     label 'dl'
     input:
-    val(spName) from species
+    val(spName) from species1
     file(noalt) from all_info_noalt2
 
     output:
