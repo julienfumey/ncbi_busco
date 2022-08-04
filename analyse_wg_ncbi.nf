@@ -110,7 +110,7 @@ process downloadGenome{
 
     shell:
     '''
-    `selectGenome.sh !{spName} !{noalt}` > genome_file_info.csv
+    `selectGenome.sh "!{spName}" !{noalt}` > genome_file_info.csv
     '''
 
 }
