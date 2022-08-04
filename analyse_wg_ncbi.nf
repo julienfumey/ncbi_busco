@@ -102,7 +102,7 @@ process downloadGenome{
     executor 'local'
     input:
     val(spName) from species1
-    each qfile(noalt) from all_info_noalt2
+    each file(noalt) from all_info_noalt2
 
     output:
     file('genome_file_info.csv') into genomeInfo
