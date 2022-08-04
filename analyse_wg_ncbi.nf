@@ -201,8 +201,10 @@ process busco{
     publishDir "${resultsDir}/results/${spName}/", mode:'copy'
     label 'busco'
 
+    maxForks 5
+
     input:
-    file(buscoref) from buscoRefFile
+    each file(buscoref) from buscoRefFile
     tuple val(spName), file(fastaUnzipped) from ( notrim ? fastaUnzipped2 : trimmedFasta )
 
     output:
