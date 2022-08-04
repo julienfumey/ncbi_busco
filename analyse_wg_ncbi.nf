@@ -124,11 +124,11 @@ process unzipFasta{
     file(fasta) from fastaFile
 
     output:
-    file('*.fna') into fastaUnzipped, fastaUnzipped2
+    file('unzip.fasta') into fastaUnzipped, fastaUnzipped2
 
     script:
     """
-    gzip -d ${fasta}
+    gunzip -k -c ${fasta} > unzip.fasta
     """
 }
 
