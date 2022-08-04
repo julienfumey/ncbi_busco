@@ -101,7 +101,7 @@ process downloadGenome{
     label 'dl'
     executor 'local'
     maxForks 1
-    
+
     input:
     val(spName) from species1
     each file(noalt) from all_info_noalt2
@@ -109,7 +109,7 @@ process downloadGenome{
     output:
     file('genome_file_info.csv') into genomeInfo
     file('*.fna.gz') into fastaFile
-    tuple val(spName), file('*._report.txt') into reportFile
+    tuple val(spName), file('*_report.txt') into reportFile
 
     shell:
     '''
