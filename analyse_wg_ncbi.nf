@@ -153,7 +153,8 @@ process checkforAltScaffold{
             listGoodScaffold.sh ${report} > good_scaffold_list.txt
             listRemovedGenomeParts.sh > ${spName}_info_removed_genome_parts.txt
         else
-            touch notrim.txt     
+            touch notrim.txt
+    fi   
     """
 
 }
