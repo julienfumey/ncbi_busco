@@ -225,7 +225,7 @@ process busco{
     publishDir "${resultsDir}/results/${spName}/", mode:'copy'
     label 'busco'
 
-    maxForks 5
+    maxForks 10
 
     input:
     each file(buscoref) from buscoRefFile
