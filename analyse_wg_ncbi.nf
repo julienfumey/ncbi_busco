@@ -232,7 +232,7 @@ process busco{
     tuple val(spName), file(fastaUnzipped) from ( notrim ? fastaUnzipped2 : trimmedFasta )
 
     output:
-    tuple file('*.tsv'), file('*.txt') into buscoresults
+    path(${spName.replaceAll(/\s/,'_')}) optional true into buscoresults
  
     script:
     """
