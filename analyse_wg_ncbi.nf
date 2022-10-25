@@ -1,5 +1,5 @@
 params.groupe='Mammalia'
-params.workpath='/pasteur/appa/scratch/jfumey/busco/'
+params.workpath='/pasteur/appa/scratch/jfumey/busco/work/'
 //params.resultspath='/pasteur/appa/homes/jfumey/didier/busco_try/'
 params.resultspath='/pasteur/appa/scratch/jfumey/busco/results/'
 params.ncbiapikey="84413ef210acc86d928b322060eb89aa1808"
@@ -9,7 +9,7 @@ params.buscoDLpath="/pasteur/appa/homes/jfumey/busco/busco_downloads/"
 groupe=params.groupe
 resultsDir=params.resultspath
 ncbiapikey=params.ncbiapikey
-buscoRefFile=file(params.buscoRefFile)
+buscoRefFile=params.buscoRefFile
 buscoDLpath=params.buscoDLpath
 
 process listGenome{
@@ -71,7 +71,12 @@ process getDownloadLink{
         touch nogenome.csv
     elif grep -q FtpPath_Assembly_rpt ${s}
         then
-        selectDLlink.sh ${s} > genome_info.csv
+        if grep "<FtpPath_Assembly_rpt></FtpPath_Assembly_rpt>" ${s}
+        then
+            touch nogenome.csv
+        else
+            selectDLlink.sh ${s} > genome_info.csv
+        fi
     else
         touch nogenome.csv
     fi
@@ -95,6 +100,8 @@ process gatherGenomeInfo{
 
 process removeAltGenome{
     //publishDir "${resultsDir}", mode: 'link'
+    scratch '/pasteur/appa/scratch/jfumey/busco/'    
+
     input:
     file(in) from all_info2.collectFile()
 
@@ -147,12 +154,14 @@ process downloadGenome{
 }
 
 process unzipFasta{
-
+    errorStrategy 'ignore'
+    publishDir "${resultsDir}/Genomes/${spName}/", mode: 'copy'
     input:
     tuple val(spName), file(fasta) from fastaFile
 
     output:
-    tuple val(spName), file('unzip.fasta') into fastaUnzipped, fastaUnzipped2
+    tuple val(spName), file('unzip.fasta') optional true  into fastaUnzipped, fastaUnzipped2
+    
 
     script:
     """
@@ -204,6 +213,7 @@ process publishModified{
 
 
 process removeAltScaffold{
+    publishDir "${resultsDir}/Genomes/${spName}/", mode: 'copy'
     label 'samtools'
 
     input:
@@ -225,17 +235,23 @@ process busco{
     publishDir "${resultsDir}/results/${spName}/", mode:'copy'
     label 'busco'
 
-    maxForks 10
+    maxForks 50
+    //scratch '/pasteur/appa/scratch/jfumey/busco/'
 
     input:
-    each file(buscoref) from buscoRefFile
+    val buscoref from buscoRefFile
+    val buscoDLPath from buscoDLpath
     tuple val(spName), file(fastaUnzipped) from ( notrim ? fastaUnzipped2 : trimmedFasta )
 
     output:
-    path("${spName.replaceAll(/\s/,'_')}/") optional true into buscoresults
- 
+    //tuple val(spName), path("*-busco.batch_summary.txt"), emit: batch_summary
+    tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/short_summary.*json") into short_summary_json
+    tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/short_summary.*txt") into short_summary_txt
+    tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/full_table*.tsv") optional true into full_tables 
+    tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/missing_busco_list.*tsv") optional true into busco_list
+
     script:
     """
-    busco -i ${fastaUnzipped} -m genome -o ${spName.replaceAll(/\s/,'_')} -l ${buscoref} --download_path ${buscoDLpath} -c 45 --offline -f --metaeuk_parameters='--remove-tmp-file=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
+    busco -i ${fastaUnzipped} -m genome -o ${spName.replaceAll(/\s/,'_')} -l ${buscoref} --download_path ${buscoDLPath} -c 40 --offline -f --metaeuk_parameters='--remove-tmp-files=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
     """
 }
