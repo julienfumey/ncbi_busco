@@ -267,7 +267,7 @@ process extractResults{
 
     script:
     """
-    extractResult.py --input ${json} --species ${spName.replaceAll(/\s/,'_')} --genomeFile ${fasta.getName()} --output results.csv
+    extractResult.py --input ${json} --species ${spName.replaceAll(/\s/,'_')} --genomeFile ${fasta.getName()} --output busco_results.csv
     """
 }
 
