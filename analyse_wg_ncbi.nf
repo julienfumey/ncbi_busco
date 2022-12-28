@@ -160,7 +160,7 @@ process unzipFasta{
     tuple val(spName), file(fasta) from fastaFile
 
     output:
-    tuple val(spName), file(fasta) file('unzip.fasta') optional true  into fastaUnzipped, fastaUnzipped2
+    tuple val(spName), file(fasta), file('unzip.fasta') optional true  into fastaUnzipped, fastaUnzipped2
     
 
     script:
