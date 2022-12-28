@@ -246,7 +246,7 @@ process busco{
     output:
     //tuple val(spName), path("*-busco.batch_summary.txt"), emit: batch_summary
     //tuple val(spName), file(val), file("${spName.replaceAll(/\s/,'_')}/short_summary.*json") into short_summary_json
-    tuple val(spName), file(val), file("${spName.replaceAll(/\s/,'_')}/short_summary.*txt") into short_summary_txt
+    tuple val(spName), file(fasta), file("${spName.replaceAll(/\s/,'_')}/short_summary.*txt") into short_summary_txt
     //tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/full_table*.tsv") optional true into full_tables 
     //tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/missing_busco_list.*tsv") optional true into busco_list
 
