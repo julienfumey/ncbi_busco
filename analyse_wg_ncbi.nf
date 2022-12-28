@@ -160,7 +160,7 @@ process unzipFasta{
     tuple val(spName), file(fasta) from fastaFile
 
     output:
-    tuple val(spName), file('unzip.fasta') optional true  into fastaUnzipped, fastaUnzipped2
+    tuple val(spName), file(fasta) file('unzip.fasta') optional true  into fastaUnzipped, fastaUnzipped2
     
 
     script:
@@ -217,11 +217,11 @@ process removeAltScaffold{
     label 'samtools'
 
     input:
-    tuple val(spName), file(infasta) from fastaUnzipped
+    tuple val(spName), file(fasta), file(infasta) from fastaUnzipped
     file(goodScaffold) from listGoodScaffold
 
     output:
-    tuple val(spName), file('genome_trimmed.fasta') into trimmedFasta
+    tuple val(spName), file(fasta), file('genome_trimmed.fasta') into trimmedFasta
 
     script:
     """
@@ -232,7 +232,7 @@ process removeAltScaffold{
 
 
 process busco{
-    publishDir "${resultsDir}/results/${spName}/", mode:'copy'
+    //publishDir "${resultsDir}/results/${spName}/", mode:'copy'
     label 'busco'
 
     maxForks 50
@@ -241,17 +241,36 @@ process busco{
     input:
     val buscoref from buscoRefFile
     val buscoDLPath from buscoDLpath
-    tuple val(spName), file(fastaUnzipped) from ( notrim ? fastaUnzipped2 : trimmedFasta )
+    tuple val(spName), file(fasta), file(fastaUnzipped) from ( notrim ? fastaUnzipped2 : trimmedFasta )
 
     output:
     //tuple val(spName), path("*-busco.batch_summary.txt"), emit: batch_summary
-    tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/short_summary.*json") into short_summary_json
-    tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/short_summary.*txt") into short_summary_txt
-    tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/full_table*.tsv") optional true into full_tables 
-    tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/missing_busco_list.*tsv") optional true into busco_list
+    //tuple val(spName), file(val), file("${spName.replaceAll(/\s/,'_')}/short_summary.*json") into short_summary_json
+    tuple val(spName), file(val), file("${spName.replaceAll(/\s/,'_')}/short_summary.*txt") into short_summary_txt
+    //tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/full_table*.tsv") optional true into full_tables 
+    //tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/missing_busco_list.*tsv") optional true into busco_list
 
     script:
     """
     busco -i ${fastaUnzipped} -m genome -o ${spName.replaceAll(/\s/,'_')} -l ${buscoref} --download_path ${buscoDLPath} -c 40 --offline -f --metaeuk_parameters='--remove-tmp-files=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
     """
+}
+
+process extractResults{
+    label 'extractResults'
+
+    input:
+    tuple val(spName), file(fasta), file(json) from short_summary_txt
+
+    output:
+    file('busco_results.csv') into finalResults
+
+    script:
+    """
+    extractResults.sh --input ${json} --species ${spName} --genomeFile ${fasta.getName()} --output results.csv
+    """
+}
+
+finalResults.collectFile(name: "busco_results.csv", keepHeader: true, skip: 1).subscribe{
+	f -> f.copyTo(resultsDir.resolve(f.name))
 }
