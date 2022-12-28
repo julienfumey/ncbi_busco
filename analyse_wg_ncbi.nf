@@ -267,7 +267,7 @@ process extractResults{
 
     script:
     """
-    extractResults.sh --input ${json} --species ${spName} --genomeFile ${fasta.getName()} --output results.csv
+    extractResult.py --input ${json} --species ${spName} --genomeFile ${fasta.getName()} --output results.csv
     """
 }
 
