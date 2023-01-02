@@ -252,7 +252,7 @@ process busco{
 
     script:
     """
-    busco -i ${fastaUnzipped} -m genome -o ${spName.replaceAll(/\s/,'_')} -l ${buscoref} --download_path ${buscoDLPath} -c 40 --offline -f --metaeuk_parameters='--remove-tmp-files=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
+    busco -i ${fastaUnzipped} -m genome -o ${spName.replaceAll(/\s/,'_').replaceAll("[()]", "")} -l ${buscoref} --download_path ${buscoDLPath} -c 40 --offline -f --metaeuk_parameters='--remove-tmp-files=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
     """
 }
 
@@ -267,7 +267,7 @@ process extractResults{
 
     script:
     """
-    extractResult.py --input ${json} --species ${spName.replaceAll(/\s/,'_').replaceAll(/\(/,'').replaceAll(/\)/,'')} --genomeFile ${fasta.getName()} --output busco_results.csv
+    extractResult.py --input ${json} --species ${spName.replaceAll(/\s/,'_').replaceAll("[()]", "")} --genomeFile ${fasta.getName()} --output busco_results.csv
     """
 }
 
