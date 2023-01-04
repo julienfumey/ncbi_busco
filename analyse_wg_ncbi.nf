@@ -246,13 +246,13 @@ process busco{
     output:
     //tuple val(spName), path("*-busco.batch_summary.txt"), emit: batch_summary
     //tuple val(spName), file(val), file("${spName.replaceAll(/\s/,'_')}/short_summary.*json") into short_summary_json
-    tuple val(spName), file(fasta), file("${spName.replaceAll(/\s/,'_')}/short_summary.*txt") into short_summary_txt
+    tuple val(spName), file(fasta), file("${spName.replaceAll(/[^a-zA-Z0-9\-\_]/,'_')}/short_summary.*txt") into short_summary_txt
     //tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/full_table*.tsv") optional true into full_tables 
     //tuple val(spName), file("${spName.replaceAll(/\s/,'_')}/missing_busco_list.*tsv") optional true into busco_list
 
     script:
     """
-    busco -i ${fastaUnzipped} -m genome -o ${spName.replaceAll(/\s/,'_').replaceAll("[()]", "")} -l ${buscoref} --download_path ${buscoDLPath} -c 40 --offline -f --metaeuk_parameters='--remove-tmp-files=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
+    busco -i ${fastaUnzipped} -m genome -o ${spName.replaceAll([^a-zA-Z0-9\-\_],'_')} -l ${buscoref} --download_path ${buscoDLPath} -c 40 --offline -f --metaeuk_parameters='--remove-tmp-files=1' --metaeuk_rerun_parameters='--remove-tmp-files=1'
     """
 }
 
@@ -267,7 +267,7 @@ process extractResults{
 
     script:
     """
-    extractResult.py --input ${json} --species ${spName.replaceAll(/\s/,'_').replaceAll("[()]", "")} --genomeFile ${fasta.getName()} --output busco_results.csv
+    extractResult.py --input ${json} --species ${spName.replaceAll(/[^a-zA-Z0-9\-\_]/,'_')} --genomeFile ${fasta.getName()} --output busco_results.csv
     """
 }
 
