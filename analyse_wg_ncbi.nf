@@ -7,7 +7,7 @@ params.buscoRefFile="mammalia_odb10"
 params.buscoDLpath="/pasteur/appa/homes/jfumey/busco/busco_downloads/"
 
 groupe=params.groupe
-resultsDir=params.resultspath
+resultsDir=file(params.resultspath)
 ncbiapikey=params.ncbiapikey
 buscoRefFile=params.buscoRefFile
 buscoDLpath=params.buscoDLpath
@@ -267,7 +267,7 @@ process extractResults{
 
     script:
     """
-    extractResult.py --input ${json} --species ${spName.replaceAll(/[^a-zA-Z0-9\-\_]/,'_')} --genomeFile ${fasta.getName()} --output busco_results.csv
+    extractResult.py --input ${json} --species ${spName.replaceAll(/[^a-zA-Z0-9\-\_]/,'_')} --genomeFile ${fasta.getName()} --output "busco_results.csv"
     """
 }
 
